@@ -1,6 +1,6 @@
 <?php 
 	require_once 'dbconnect/host.php';
-	include 'interface.php';
+	include 'interface-login.php';
 	session_start();
 	if(isset($_SESSION['user'])!="")
 	{
@@ -25,12 +25,15 @@
 		else
 		{
 			?>
-			<script>alert('Invalid Username or Password!');</script>
+			<script>
+				alert('Invalid Username or Password!');
+			</script>
 			<?php
 		}
 	}
 ?>
 <link href="css/login-form.css" rel="stylesheet">
+<body>
 
 <div class="container">
     <div class="card card-container">
@@ -66,5 +69,5 @@
 		</center>
     </div><!-- /card-container -->
 </div><!-- /container -->
-
+</body>
 <script src="js/login-form.js"></script>

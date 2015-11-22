@@ -1,6 +1,6 @@
 <?php 
 	require_once 'dbconnect/host.php';
-	include 'interface.php';
+	include 'interface-login.php';
 	session_start();
 	if(isset($_SESSION['user'])!="")
 	{
@@ -8,39 +8,68 @@
 	}
 	if(isset($_POST['btn-register']))
 	{
-		$_SESSION['register'] = $_POST['username'];
 		$username = mysqli_real_escape_string($checkConnect, $_POST['username']);
 		$password = mysqli_real_escape_string($checkConnect, $_POST['password1']);
 		$cpassword = mysqli_real_escape_string($checkConnect, $_POST['password2']);
 		$email = mysqli_real_escape_string($checkConnect, $_POST['email']);
-		date_default_timezone_set("UTC+8");
 		$datetime = date("Y-m-d h:i:sa");
 		$lastLogin = NULL;
 		$student_id = NULL;
 		$staff_id = NULL;
 		$houseOwner_id = NULL;
 		$level_id = mysqli_real_escape_string($checkConnect, $_POST['selectUser']);
-		if($password != $cpassword)
-		{
+		$_SESSION['register'] = $_POST['username'];
+		$_SESSION['level_id'] = $_POST['selectUser'];
+		$_SESSION['email'] = $_POST['email'];
+		$usernamesql = mysqli_query($checkConnect, "SELECT * FROM login WHERE username = '".$username."'") or die(mysql_error());
+		$emailsql = mysqli_query($checkConnect, "SELECT * FROM login WHERE email='".$email."'") or die(mysql_error());
+		
+		#$check = mysql_fetch_array(mysql_query($sql));
+		if(mysqli_num_rows($usernamesql)){
 			?>
-			<script>alert('Password not match!');</script>
+			<script>
+				alert('Username already exist!');
+			</script>
+			<?php
+		}else if(mysqli_num_rows($emailsql)){
+			?>
+			<script>
+				alert('Email already exist!');
+			</script>
 			<?php
 		}else{
-			$password=sha1($password); // Encrypted Password
-			$insert = "INSERT INTO login (username, password, email, createdDate, lastLogin, student_id, staff_id, houseOwner_id, level_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			$statement = mysqli_prepare($checkConnect, $insert);
-			mysqli_stmt_bind_param($statement, "sssssiiii", $username, $password, $email, $datetime, $lastLogin, $student_id, $staff_id, $houseOwner_id, $level_id);
-			mysqli_stmt_execute($statement);
-			mysqli_stmt_close($statement);
-			mysqli_close($checkConnect);
-			?>
-			<script>alert("Successfully Registered!");</script>
-			<?php
-			header("Location: login.php");
+			if($password != $cpassword)
+			{
+				?>
+				<script>alert('Password not match!');</script>
+				<?php
+			}else{
+				$password=sha1($password); // Encrypted Password
+				$insert = "INSERT INTO login (username, password, email, createdDate, lastLogin, student_id, staff_id, houseOwner_id, level_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				$statement = mysqli_prepare($checkConnect, $insert);
+				mysqli_stmt_bind_param($statement, "sssssiiii", $username, $password, $email, $datetime, $lastLogin, $student_id, $staff_id, $houseOwner_id, $level_id);
+				mysqli_stmt_execute($statement);
+				mysqli_stmt_close($statement);
+				mysqli_close($checkConnect);
+				?>
+					<script>
+						alert('Account Created!');
+					</script>
+				<?php
+				if($_SESSION['level_id'] == 1){
+					header("Location: registerStaff.php");
+				}elseif($_SESSION['level_id'] == 2){
+					header("Location: registerStudent.php");
+				}elseif($_SESSION['level_id'] == 3){
+					header("Location: registerHouseOwner.php");
+				}
+				
+			}	
 		}		
 	}
 ?>
 <link href="css/login-form.css" rel="stylesheet">
+<body>
 <div class="container">
     <div class="card card-container">
 		<strong style="font-size: 18px">Sign Up</strong></br>It's free and always will be.</br>
@@ -78,7 +107,7 @@
 						<input type="checkbox" value="term" required> Terms and Conditions.
 					</label>
 				</div>
-				<button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" name="btn-register">Confirm</button>
+				<button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" name="btn-register">NEXT</button>
 				Already Registered? 
 				<a href="login.php" class="forgot-password">
 					Login Here!
@@ -86,4 +115,5 @@
 			</form><!-- /form -->
     </div><!-- /card-container -->
 </div><!-- /container -->
+</body>
 <script src="js/login-form.js"></script>
