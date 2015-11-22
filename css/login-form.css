@@ -13,6 +13,9 @@ body, html {
 .card-container.card {
     max-width: 350px;
     padding: 40px 40px;
+	-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+	box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
 }
 
 .btn {
@@ -78,8 +81,8 @@ body, html {
     box-sizing: border-box;
 }
 
-.form-signin #inputEmail,
-.form-signin #inputPassword {
+.form-signin #username,
+.form-signin #password {
     direction: ltr;
     height: 44px;
     font-size: 16px;

@@ -10,10 +10,11 @@
 	{
 		$username = mysqli_real_escape_string($checkConnect, $_POST['username']);
 		$password = mysqli_real_escape_string($checkConnect, $_POST['password']);
-		$password=md5($password); // Encrypted Password
+		$password=sha1($password); // Encrypted Password
 		$sql = "SELECT * FROM login WHERE username='$username' and password='$password'";
 		$result = mysqli_query($checkConnect, $sql) or die(mysql_error());
 		$count = mysqli_num_rows($result);
+		$row = mysqli_fetch_array($result);
 		
 		// If result matched $username and $password, table row must be 1 row
 		if($count==1)
@@ -56,11 +57,11 @@
             <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" name="btn-login">Sign In</button>
         </form><!-- /form -->
 		<center>
-		<a href="#" class="new-account">
-            Need an Account?
-        </a></br>
+		<a href="register.php" class="new-account">
+            Create Account!
+        </a>or
         <a href="#" class="forgot-password">
-            Forgot the password?
+            Reset Password?
         </a>
 		</center>
     </div><!-- /card-container -->
